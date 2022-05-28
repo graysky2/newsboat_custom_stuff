@@ -4,9 +4,9 @@ Hacky shell scripts to generate RSS feeds on the fly for use is-as or [Newsboat]
 * All scripts require: bash lynx
 * The p0rnhub script additionally requires: coreutils gawk sed
 
-Once copied to `~/.newsboat/` make the script(s) executable. Newsboat can use them via the `filter:` prefix in `~/.newsboat/urls` like so:
+Once copied to `~/.config/newsboat/` make the script(s) executable. Newsboat can use them via the `filter:` prefix in `~/.config/newsboat/urls` like so:
 ```
-filter:~/.newsboat/stable-review.sh:stable
+filter:~/.config/newsboat/stable-review.sh:stable
 ```
 
 File | Description | 

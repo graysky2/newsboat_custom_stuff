@@ -4,36 +4,23 @@
 #
 # depends on: bash coreutils gawk lynx sed
 #
-# note that there is a difference between a model and user.
-# if the URL contains "user" in it, define the "user" variable and conversely
-# if it contains "model" in it, use the "model" variable.
-#
-# 1. save this script to ~/.newsboat/foo.sh and make it executable
-# 2. add an entry to ~/.newsboat/urls referencing this script like so:
-#    filter:~/.newsboat/foo.sh:foo "~foo new video feed" p0rn
+# 1. save this script to ~/.config/newsboat/foo.sh and make it executable where foo is
+#    the exact name of the model's profile
+# 2. add an entry to ~/.config/newsboat/urls referencing this script like so:
+#    filter:~/.config/newsboat/foo.sh:foo "~foo new video feed" p0rn
 
-# pornhub user in either model or user but not both
-model=
-user=
+# pornhub model
+pre="$(basename $0)"
+model="${pre/.sh}"
 
 ## should not need to edit below this line
 target=/tmp/$model.html
 fixed=${target/.html/}.fixed.html
-
-if [[ -n $model ]]; then
-  url=https://www.pornhub.com/model/$model/videos
-else
-  url=https://www.pornhub.com/users/$model/videos/public
-fi
-
+url=https://www.pornhub.com/model/$model/videos
 lynx -source $url > $target || exit 1
 
 # cut at public videos to remove non-specific
-if [[ -n $model ]]; then
-  sed -ne "/'s Videos/,$ p" <$target >$fixed
-else
-  sed -ne "/'s Public Videos/,$ p" <$target >$fixed
-fi
+sed -ne "/'s Videos/,$ p" <$target >$fixed
 
 mapfile -t hashes < <(grep 'title=' $fixed | grep 'class=\"\"' | awk -F'viewkey=' '{ print $2 }' | awk -F'"' '{print $1}')
 mapfile -t titles < <(grep 'title=' $fixed | grep 'class=\"\"' | awk -F'viewkey=' '{ print $2 }' | awk -F'"' '{print $3}'|sed 's/ /_/g' | sed 's/[^a-zA-Z0-9_]//g')
@@ -59,7 +46,6 @@ EOF
   echo '  </channel>'
   echo '</rss>'
 }
-
 rm -f $target $fixed
 
 # vim:set ts=2 sw=2 et:
